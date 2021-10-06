@@ -10,21 +10,24 @@ function Dashboard() {
   const [user, loading, error] = useAuthState(auth);
   const [name, setName] = useState("");
   const history = useHistory();
-  const fetchUserName = async () => {
-    try {
-      const q = await getDocs(query(collection(db,"users"),where("uid", "==", user?.uid)))
-      const data = await q.docs[0].data();
-      setName(data.name);
-    } catch (err) {
-      console.error(err);
-      alert("An error occured while fetching user data");
-    }
-  };
+  
+  
   useEffect(() => {
+    const fetchUserName = async () => {
+        try {
+          const q = await getDocs(query(collection(db,"users"),where("uid", "==", user?.uid)))
+          const data = await q.docs[0].data();
+          setName(data.name);
+        } catch (err) {
+          console.error(err);
+          alert("An error occured while fetching user data");
+        }
+      };
+
     if (loading) return;
     if (!user) return history.replace("/");
     fetchUserName();
-  }, [user, loading]);
+  }, [user, loading,history]);
   return (
     <div className="dashboard">
       <div className="dashboard__container">

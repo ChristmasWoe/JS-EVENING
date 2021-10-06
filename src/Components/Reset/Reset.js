@@ -11,7 +11,7 @@ function Reset() {
   useEffect(() => {
     if (loading) return;
     if (user) history.replace("/dashboard");
-  }, [user, loading]);
+  }, [user, loading,history]);
   return (
     <div className="reset">
       <div className="reset__container">
