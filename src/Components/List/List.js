@@ -146,7 +146,7 @@ const ListView = ({tasks,users,...props}) => {
     const filtered = filterItems(paginated,{priority:filterPriority})
 
     return (
-        <Card style={{width:"90%"}}>
+        <Card id="tasks-list">
             {/* <PerfectScrollbar> */}
                 <Box minWidth={700}>
                     <Table>
