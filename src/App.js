@@ -6,6 +6,7 @@ import Register from './Components/Register/Register';
 import Reset from './Components/Reset/Reset';
 import Dashboard from './Components/Dashboard/Dashboard';
 import CreateView from './Components/Create';
+import EditView from "./Components/Edit"
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route exact path="/reset" component={Reset} />
           <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/dashboard/create" component={CreateView} />
+          <Route exact path="/dashboard/edit/:taskId" component={EditView} />
         </Switch>
       </Router>
     </div>

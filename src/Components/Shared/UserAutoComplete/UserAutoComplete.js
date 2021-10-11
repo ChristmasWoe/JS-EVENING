@@ -174,7 +174,7 @@ Tag.propTypes = {
 };
 
 
-const UserAutoComplete = ({options,setter,...props}) => {
+const UserAutoComplete = ({options,setter,def,...props}) => {
 const classes = useStyles()
 
   const {
@@ -190,7 +190,7 @@ const classes = useStyles()
     setAnchorEl,
   } = useAutocomplete({
     id: 'user-auto-complete',
-    defaultValue: [],
+    defaultValue: def?options.filter(o=>def.includes(o.uid)): [],
     multiple: true,
     options: options,
     getOptionLabel: (option) => option.email,

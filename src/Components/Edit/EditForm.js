@@ -29,7 +29,7 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers';
 import 'date-fns';
-import { collection,addDoc } from '@firebase/firestore'
+import { collection,updateDoc,doc } from '@firebase/firestore'
 import { db } from '../../lib/firebase'
 
 const useStyles = makeStyles(() => ({
@@ -37,10 +37,94 @@ const useStyles = makeStyles(() => ({
     footer:{
         display:"flex",
         flexDirection:"row",
+    },
+    stOpen:{
+        color:"gray",
+    },
+    stProccess:{
+        color:"blue",
+    },
+    stReview:{
+        color:"blue",
+    },
+    stTesting:{
+        color:"chocolate",
+    },
+    stReopened:{
+        color:"gray",
+    },
+    stWaiting:{
+        color:"orange",
+    },
+    stClosed:{
+        color:"green",
     }
 }))
 
-const CreateForm = ({ className,users,currentUser, ...rest }) => {
+const getStatusLabel = status => {
+    switch (status){
+        case 0:
+            return "Открыто"
+        case 1:
+            return "В процессе"
+        case 2:
+            return "Код ревью"
+        case 3:
+            return "В тестировании"
+        case 4:
+            return "Переоткрыто"
+        case 5:
+            return "В ожидании"
+        case 6:
+            return "Закрыто"
+        default:
+            return "Открыто"
+    }
+}
+
+const getStatusCls = status => {
+    switch (status){
+        case 0:
+            return "stOpen"
+        case 1:
+            return "stProccess"
+        case 2:
+            return "stReview"
+        case 3:
+            return "stTesting"
+        case 4:
+            return "stReopened"
+        case 5:
+            return "stWaiting"
+        case 6:
+            return "stClosed"
+        default:
+            return "stOpened"
+    }
+}
+
+const getNextStatus = status =>{
+    switch (status){
+        case 0:
+            return 1
+        case 1:
+            return 2
+        case 2:
+            return 3
+        case 3:
+            return 6
+        case 4:
+            return 1
+        case 5:
+            return 1
+        case 6:
+            return 4
+        default:
+            return 0
+    }
+}
+
+const EditForm = ({ className,users,currentUser,task, ...rest }) => {
     const classes = useStyles()
     const history = useHistory()
 
@@ -51,11 +135,12 @@ const CreateForm = ({ className,users,currentUser, ...rest }) => {
     return (
         <Formik
             initialValues={{
-                name: '',
-                description: '',
-                assigned_to:[],
-                due_date:new Date(),
-                priority:0, // 0 minor, 1 major, 2 blocker
+                name: task.name,
+                description: task.description,
+                assigned_to: task.assigned_to ,
+                due_date: new Date(task.due_date.toMillis()),
+                priority:task.priority, // 0 minor, 1 major, 2 blocker
+                status:task.status,
                 submit: null,
             }}
             validationSchema={Yup.object().shape({
@@ -70,16 +155,15 @@ const CreateForm = ({ className,users,currentUser, ...rest }) => {
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                 try {
                     // NOTE: Make API request
-                    const { name, description,due_date,assigned_to,priority } = values
+                    const { name, description,due_date,assigned_to,priority,status } = values
 
-                    await addDoc(collection(db,"tasks"),{
+                    await updateDoc(doc(db,"tasks",task.id) ,{
                         name,
                         description,
                         assigned_to,
                         due_date,
                         priority,
-                        status:0,
-                        created_at:new Date(),
+                        status,
                         updated_at:new Date(),
                     }) 
 
@@ -127,7 +211,7 @@ const CreateForm = ({ className,users,currentUser, ...rest }) => {
 
                                     <Box mt={3} mb={1}>
                                     <Typography>
-                                        Дата выполнения
+                                        Дата выполнения и Статус
                                     </Typography>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <Grid container >
@@ -149,7 +233,9 @@ const CreateForm = ({ className,users,currentUser, ...rest }) => {
                                                     'aria-label': 'change date',
                                                 }}
                                             />
-
+                                            <Button onClick={e=>setFieldValue("status",getNextStatus(values.status))} className={classes[getStatusCls(values.status)]} style={{marginLeft:"auto",height:"32px",marginTop:"20px",border:"1px solid"}}>
+                                                {getStatusLabel(values.status)}
+                                            </Button>
                                         </Grid>
                                     </MuiPickersUtilsProvider>
                                 </Box>
@@ -173,7 +259,7 @@ const CreateForm = ({ className,users,currentUser, ...rest }) => {
                                     <Typography style={{marginBottom:"10px"}}>
                                         Выбор исполнителя
                                     </Typography>
-                                        <UserAutoComplete setter={value=>setFieldValue("assigned_to",value)} options={users} />
+                                        <UserAutoComplete setter={value=>setFieldValue("assigned_to",value)} def={task.assigned_to} options={users} />
                                     </Box>
                                 </CardContent>
                             </Card>
@@ -186,7 +272,7 @@ const CreateForm = ({ className,users,currentUser, ...rest }) => {
                     )}
                     <Box className={classes.footer} mt={2}>
                         <Button color="secondary" variant="contained" type="submit" disabled={isSubmitting}>
-                            Создать задачу
+                            Редактировать задачу
                         </Button>
                         <Button onClick={onCancelClick} style={{marginLeft:"auto"}} color="secondary" variant="outlined" type="submit">
                             Отмена
@@ -198,4 +284,4 @@ const CreateForm = ({ className,users,currentUser, ...rest }) => {
     )
 }
 
-export default CreateForm
+export default EditForm;

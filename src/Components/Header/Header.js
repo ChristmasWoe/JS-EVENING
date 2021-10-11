@@ -23,12 +23,10 @@ function stringToColor(string) {
       color += `00${value.toString(16)}`.substr(-2);
     }
     /* eslint-enable no-bitwise */
-    console.log(color)
     return color;
   }
 
 function getInitialsFromName(fn){
-    console.log("fn",fn)
     try{
         let arr = fn.split(" ");
         if (arr.length>1){
