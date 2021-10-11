@@ -5,6 +5,7 @@ import Login from './Components/Login/Login';
 import Register from './Components/Register/Register';
 import Reset from './Components/Reset/Reset';
 import Dashboard from './Components/Dashboard/Dashboard';
+import CreateView from './Components/Create';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route exact path="/register" component={Register} />
           <Route exact path="/reset" component={Reset} />
           <Route exact path="/dashboard" component={Dashboard} />
+          <Route exact path="/dashboard/create" component={CreateView} />
         </Switch>
       </Router>
     </div>

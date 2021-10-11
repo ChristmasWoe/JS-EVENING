@@ -4,7 +4,7 @@ import { useHistory } from "react-router";
 import "./Dashboard.css";
 import { auth, db, logout } from "../../lib/firebase";
 import { collection, doc, getDocs,getFirestore,query,where } from "firebase/firestore"; 
-
+import Header from "../Header/Header"
 
 function Dashboard() {
   const [user, loading, error] = useAuthState(auth);
@@ -28,16 +28,19 @@ function Dashboard() {
     if (!user) return history.replace("/");
     fetchUserName();
   }, [user, loading,history]);
+
+  console.log("user0",user)
   return (
     <div className="dashboard">
-      <div className="dashboard__container">
+      <Header user={user&&user.email?({...user,displayName:name}):{}} />
+      {/* <div className="dashboard__container">
         Logged in as
         <div>{name}</div>
         <div>{user?.email}</div>
         <button className="dashboard__btn" onClick={logout}>
           Logout
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }
