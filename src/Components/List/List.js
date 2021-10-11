@@ -210,7 +210,7 @@ const ListView = ({tasks,users,...props}) => {
             {/* </PerfectScrollbar> */}
             <TablePagination
                 component="div"
-                count={filtered.length}
+                count={tasks.length}
                 onChangePage={handlePageChange}
                 onChangeRowsPerPage={handleLimitChange}
                 page={page}
